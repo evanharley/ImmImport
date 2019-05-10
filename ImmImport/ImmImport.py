@@ -1,9 +1,13 @@
 import openpyxl
 import pyodbc
+import tkinter as tk
+import os
+from tkinter import filedialog
 from datetime import datetime
 
 class ImmImport():
     def __init__(self, *args, **kwargs):
+        root = tk.Tk()
         self._connection = pyodbc.connect('DSN=IMM Prod; Trusted_Connection=yes;')
         self.cursor = self._connection.cursor()
         return super().__init__(*args, **kwargs)
@@ -24,7 +28,7 @@ class ImmImport():
 
     def _write_to_test(self):
         self._connection.close()
-        self._connection = pyodbc.connect('DSN=IMMTest; Trusted_Connection=yes;')
+        self._connection = pyodbc.connect('DSN=ImportTest; Trusted_Connection=yes;')
         self.cursor = self._connection.cursor()
         return 0, 'Database connection changed to Test'
 
@@ -41,9 +45,10 @@ class ImmImport():
             for row in working_sheet.rows:
                 data_to_import = self._handle_row(row, keys)
                 query = self._write_query(data_to_import, tab)
-                self._import(query)
+                result = self._import(query, test_rand=1)
+                
 
-        return data
+        return 0
 
     def _handle_row(self, row, keys):
         data = {keys[i]: row[i].value for i in range(len(row)) if row[i].value is not None and row[i].value is not ''}
@@ -62,14 +67,21 @@ class ImmImport():
         elif test_rand > 1:
             test_rand -= 2
             print('it broke')
-            return query
+            return (1, query)
         else:
             try:
                 self.cursor.execute(query)
             except pyodbc.IntegrityError as e:
                 print('it broke')
-                return (query, e)
-        return 0
+                return (1, query, e)
+        return (0, query, 'Sucess')
+
+    def main(self):
+        directory = filedialog.askdirectory()
+        for file in os.listdir(directory):
+            spreadsheet = self._get_spreadsheet
+            result = self._handle_spreadsheet(spreadsheet)
+
 
 
 if __name__ == '__main__':

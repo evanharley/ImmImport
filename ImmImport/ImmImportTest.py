@@ -11,6 +11,7 @@ class Test_ImmImport(unittest.TestCase):
         self.sheet, self.result = self.impt._get_spreadsheet('C:/Users/evharley/source/repos/ImmImport/ImmImport/Ornithology/1_Test.xlsx')
         self.keys = self.impt._get_keys(self.sheet['OrnithologyItem'])
         self.length = len(self.impt._get_keys(self.sheet['OrnithologyItem']).keys())
+        self.impt._write_to_test()
         return super().setUp()
 
     def test_get_keys(self):
@@ -61,13 +62,15 @@ class Test_ImmImport(unittest.TestCase):
         return 0
 
     def test_import(self):
-        query = ''
         for run in range(random.randint(1, 11)):
+            data = self.impt._handle_row(self.sheet['OrnithologyItem'][random.randint(2,51)], self.keys)
+            query = self.impt._write_query(data, 'OrnithologyItem')
             fail = random.random()
             if fail >= 0.5:
-                rand = random.randint(2, length + 2)
+                rand = random.randint(2, self.length + 2)
                 result = self.impt._import(query, test_rand = rand)
-                self.assertEqual(1, result)
+                print(result[1])
+                self.assertEqual(1, result[0])
             else:
                 result = self.impt._import(query, test_rand=1)
                 self.assertEqual(0, result)
