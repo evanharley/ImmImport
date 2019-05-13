@@ -8,7 +8,8 @@ Royal BC Museum's *Integrated Museum Management(IMM)* Collection Management Syst
 
 This is a simple class with methods to facilitate the import of Discipline data into IMM.
 The run structure looks a bit like the following:
-main() -> _handle_spreadsheet() -> _handle_row() -> _write_query() -> _import()
+
+ImmImport() -> _write_to_*[write to method of choice]* -> *main()* -> _handle_spreadsheet() -> _handle_row() -> _write_query() -> _import()
 
 ### Class Structure
 
