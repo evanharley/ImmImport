@@ -46,7 +46,10 @@ class ImmImport():
                 data_to_import = self._handle_row(row, keys)
                 query = self._write_query(data_to_import, tab)
                 result = self._import(query, test_rand=1)
-                
+                if result[0] == 1:
+                    print('This query {0} threw the error listed below'.format(result[1]))
+                    print('Error: \n {0}'.format(result[2]))
+                    return 1
 
         return 0
 
@@ -79,12 +82,22 @@ class ImmImport():
     def main(self):
         directory = filedialog.askdirectory()
         for file in os.listdir(directory):
-            spreadsheet = self._get_spreadsheet
+            spreadsheet = self._get_spreadsheet(directory + '/' + file)
             result = self._handle_spreadsheet(spreadsheet)
+            if result == 1:
+                print(file)
+                print('Something broke. Fix it.')
+                return 1
+            else:
+                print('Data from {0} sucessfully imported'.format(file))
+        self.cursor.commit()
+        return 0
+
 
 
 
 if __name__ == '__main__':
     impt = ImmImport()
+    impt.main()
     
     
